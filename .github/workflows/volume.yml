@@ -2,7 +2,7 @@ name: 1. Search Volume Engine
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Runs automatically every Sunday at Midnight
+    - cron: '0 0 * * *' # Runs automatically every day at Midnight UTC
   workflow_dispatch: # Allows you to trigger it manually
 
 permissions:
