@@ -1,0 +1,35 @@
+name: 1. Search Volume Engine
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Runs automatically every Sunday at Midnight
+  workflow_dispatch: # Allows you to trigger it manually
+
+permissions:
+  contents: write
+
+jobs:
+  update-volume-db:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install requests pandas
+
+      - name: Run Volume Miner
+        run: python volume_miner.py
+
+      - name: Push Database to GitHub
+        run: |
+          git config --global user.name "God-Mode Bot"
+          git config --global user.email "bot@godmode.com"
+          git add search_volume_db.csv
+          git commit -m "Updated Keyword Search Volume: $(date)" || exit 0
+          git push
