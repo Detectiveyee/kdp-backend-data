@@ -1,0 +1,35 @@
+name: 2. Market Tracker (Daily)
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # Runs automatically every day at 8:00 AM UTC
+  workflow_dispatch: 
+
+permissions:
+  contents: write
+
+jobs:
+  update-market-db:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install requests beautifulsoup4 pandas
+
+      - name: Run Market Tracker
+        run: python market_tracker.py
+
+      - name: Push Databases to GitHub
+        run: |
+          git config --global user.name "God-Mode Bot"
+          git config --global user.email "bot@godmode.com"
+          git add competition_db.csv bsr_history_db.csv
+          git commit -m "Daily Market Data Update: $(date)" || exit 0
+          git push
