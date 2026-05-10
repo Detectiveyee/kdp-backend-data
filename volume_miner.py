@@ -47,7 +47,7 @@ def run_volume_miner():
                 "Date_Checked": today_date,
                 "Seed_Keyword": seed.strip(),
                 "Long_Tail_Keyword": res,
-                "Autocomplete_Rank": rank # 1 is highest volume, 10 is lowest
+                "Autocomplete_Rank": rank # Correctly logs 1, 2, 3, etc.
             })
         
         # 2. The Alphabet Soup (seed + a, seed + b, etc.)
@@ -60,13 +60,16 @@ def run_volume_miner():
                     "Date_Checked": today_date,
                     "Seed_Keyword": seed.strip(),
                     "Long_Tail_Keyword": res,
-                    "Autocomplete_Rank": rank
+                    "Autocomplete_Rank": rank # Correctly logs 1, 2, 3, etc.
                 })
             
-            time.sleep(1) # Polite delay
+            time.sleep(1) # Polite delay so Amazon doesn't block the bot
             
     # Save to CSV for the Chrome Extension to read
-    df = pd.DataFrame(all_data).drop_duplicates(subset=['Long_Tail_Keyword'])
+    df = pd.DataFrame(all_data)
+    # Drop duplicates, but keep the highest rank (first time it was seen)
+    df = df.drop_duplicates(subset=['Long_Tail_Keyword'], keep='first')
+    
     df.to_csv('search_volume_db.csv', index=False)
     print(f"SUCCESS: Saved {len(df)} keywords to the database.")
 
